@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package com.example.grpc.common.model;
+option java_multiple_files = true;
+
+message User {
+  string username = 1;
+  string password = 2;
+  bool isUpdated = 3;
+}
+
+message LoginRequest {
+    User user = 1;
+}
+
+message LoginResponse {
+  bool isSuccessful = 1;
+  string message = 2;
+}
+
+message CollectUserRequest {
+  int32 numberUser = 1;
+}
+
+message MessageRequest {
+  string message = 1;
+}
+
+message MessageResponse {
+  string message = 1;
+}
