@@ -9,6 +9,11 @@ message User {
   bool isUpdated = 3;
 }
 
+message UpdatedUserRequest {
+  string username = 1;
+  string password = 2;
+}
+
 message LoginRequest {
     User user = 1;
 }

@@ -6,9 +6,17 @@ option java_multiple_files = true;
 import "model.proto";
 
 service UserService {
+
+ // simple RPC
   rpc testApp(com.example.grpc.common.model.MessageRequest) returns (com.example.grpc.common.model.MessageResponse);
   rpc login(com.example.grpc.common.model.LoginRequest) returns (com.example.grpc.common.model.LoginResponse);
+
+  // server-side streaming RPC
   rpc getUsers(com.example.grpc.common.model.CollectUserRequest) returns (stream com.example.grpc.common.model.User);
+
+  // client-side streaming RPC
   rpc addUsers(stream com.example.grpc.common.model.User) returns (com.example.grpc.common.model.MessageResponse);
-  rpc updatedUsers(stream com.example.grpc.common.model.User) returns (stream com.example.grpc.common.model.User);
+
+  // bidirectional streaming RPC
+  rpc updatedUsers(stream com.example.grpc.common.model.UpdatedUserRequest) returns (stream com.example.grpc.common.model.User);
 }
