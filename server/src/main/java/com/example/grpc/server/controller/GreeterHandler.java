@@ -2,6 +2,8 @@ package com.example.grpc.server.controller;
 
 import com.example.grpc.common.model.*;
 import com.example.grpc.common.service.UserServiceGrpc;
+import com.example.grpc.common.Constants;
+import com.example.grpc.server.auth.AuthorizationServerInterceptor;
 import io.grpc.stub.StreamObserver;
 import org.lognet.springboot.grpc.GRpcService;
 import org.slf4j.Logger;
@@ -27,6 +29,9 @@ class GreeterHandler extends UserServiceGrpc.UserServiceImplBase {
 
 	@Override
 	public void testApp(MessageRequest request, StreamObserver<MessageResponse> responseObserver) {
+		String clientId = Constants.CLIENT_ID_CONTEXT_KEY.get();
+		System.out.println("Processing request from " + clientId);
+
 		responseObserver.onNext(MessageResponse.newBuilder().setMessage("receive: " + request.getMessage()).build());
 		responseObserver.onCompleted();
 	}
@@ -53,7 +58,7 @@ class GreeterHandler extends UserServiceGrpc.UserServiceImplBase {
 
 		for (int i = 0; i < num; i++) {
 			User user = User.newBuilder().setUsername(username.get(i)).setPassword(password.get(i)).build();
-			logger.info((i+1) + ": " + user);
+			logger.info((i + 1) + ": " + user);
 			responseObserver.onNext(user);
 		}
 
@@ -68,7 +73,7 @@ class GreeterHandler extends UserServiceGrpc.UserServiceImplBase {
 			@Override
 			public void onNext(User value) {
 				logger.info("add users: no." + count);
-				if(!users.containsKey(value.getUsername())) {
+				if (!users.containsKey(value.getUsername())) {
 					users.put(value.getUsername(), value.getPassword());
 					count++;
 				}

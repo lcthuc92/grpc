@@ -1,8 +1,12 @@
 package com.example.grpc.client;
 
+import com.example.grpc.client.helper.BearerToken;
+import com.example.grpc.common.Constants;
 import com.example.grpc.common.service.UserServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -28,21 +32,21 @@ public class ClientApplication {
 			.build();
 	}
 
-   /* @Bean
-    public ManagedChannel managedChannelSSL() throws SSLException {
-        // With server authentication SSL/TLS; custom CA root certificates; not on Android
-        return NettyChannelBuilder.forAddress(host, port)
-            .sslContext(GrpcSslContexts.forClient().trustManager(new File("roots.pem")).build())
-            .build();
-    }*/
+	@Bean
+	public static String getJwt() {
+		return Jwts.builder()
+			.setSubject("GreetingClient") // client's identifier
+			.signWith(SignatureAlgorithm.HS256, Constants.JWT_SIGNING_KEY)
+			.compact();
+	}
 
 	@Bean
 	public UserServiceGrpc.UserServiceBlockingStub blockingStub(ManagedChannel channel) {
-		return UserServiceGrpc.newBlockingStub(channel);
+		return UserServiceGrpc.newBlockingStub(channel).withCallCredentials(new BearerToken(getJwt()));
 	}
 
 	@Bean
 	public UserServiceGrpc.UserServiceStub userServiceStub(ManagedChannel channel) {
-		return UserServiceGrpc.newStub(channel);
+		return UserServiceGrpc.newStub(channel).withCallCredentials(new BearerToken(getJwt()));
 	}
 }
